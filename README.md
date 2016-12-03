@@ -4,12 +4,15 @@ Taxonomy for Pagekit
 
 ### Register a taxonomy
 
-By default a simpe tag-taxonomy is added. Only define the route where your taxonomy overview page will live.
+By default a simple tag-taxonomy is added. Only define the route where your taxonomy overview page will live. 
+For configuring the route see [Attach a view for a term](#attach-a-view-for-a-term).
 
 ```php
-$app['taxonomy']->register('extension.item.tag', [
-    'route' => '@extenstion/item/tag',
-]);
+$app->on('boot', function ($event, $app) {
+    $app['taxonomy']->register('extension.item.tag', [
+        'route' => '@extenstion/item/tag',
+    ]);
+});
 ```
 
 You can define more complex taxonomies:

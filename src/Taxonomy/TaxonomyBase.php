@@ -80,7 +80,7 @@ class TaxonomyBase {
         $term_ids = array_map(function ($term) {
             return $term['id'];
         }, $terms);
-        $existing = $this->getTerms($item_id);
+        $existing = $this->itemTerms($item_id);
         $remove = array_diff(array_keys($existing), $term_ids);
         //remove deleted
         foreach ($remove as $term_id) {
