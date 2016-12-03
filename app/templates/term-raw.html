@@ -1,0 +1,47 @@
+<form class="uk-form uk-form-stacked" v-validator="form" @submit="saveTerm(edit) | valid">
+    <div class="uk-modal-header">
+        <h2>{{ 'Edit' | trans }} {{ taxonomy.label_single }}</h2>
+    </div>
+
+    <div class="uk-grid pk-grid-large pk-width-sidebar-large" data-uk-grid-margin>
+        <div class="pk-width-content">
+
+            <div class="uk-form-row">
+                <label for="form-title" class="uk-form-label">{{ 'Title' | trans }}</label>
+                <div class="uk-form-controls">
+                    <input id="form-title" class="uk-width-1-1 uk-form-large" name="title" type="text"
+                           v-model="edit.title" v-validate:required>
+                    <p class="uk-form-help-block uk-text-danger" v-show="form.title.invalid">{{ 'Invalid title.' | trans
+                        }}</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="pk-width-sidebar">
+
+                <div class="uk-form-row">
+                    <label for="form-slug" class="uk-form-label">{{ 'Slug' | trans }}</label>
+
+                    <div class="uk-form-controls">
+                        <input id="form-slug" class="uk-width-1-1" type="text" v-model="edit.slug">
+                    </div>
+                </div>
+
+                <div class="uk-form-row">
+                    <label for="form-status" class="uk-form-label">{{ 'Status' | trans }}</label>
+                    <div class="uk-form-controls">
+                        <select id="form-status" class="uk-width-1-1" v-model="edit.status">
+                            <option v-for="status in config.statuses" :value="$key">{{ status | trans }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-link uk-modal-close" type="button">{{ 'Cancel' | trans }}</button>
+            <button class="uk-button uk-button-primary" :disabled="form.invalid || !edit.title">{{ 'Save' | trans }}
+            </button>
+        </div>
+
+</form>
