@@ -68,13 +68,13 @@ Use the input-components to select the term(s) for your items. Just pass the ite
 For one term per item;
 
 ```html
-<input-terms-one :taxonomy-name="extension.product.color" :item_id="item.id"></input-terms-many>
+<input-terms-one taxonomy-name="extension.product.color" :item_id="item.id"></input-terms-one>
 ```
 
 For many terms per item;
 
 ```html
-<input-terms-many :taxonomy-name="extension.item.tag" :item_id="item.id"></input-terms-many>
+<input-terms-many taxonomy-name="extension.item.tag" :item_id="item.id"></input-terms-many>
 ```
 
 ### API
