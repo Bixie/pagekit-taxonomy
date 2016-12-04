@@ -30,11 +30,21 @@ trait TermModelTrait
     }
 
     /**
+     * @param $taxonomy
+     * @return Term[]
+     */
+    public static function byTaxonomy ($taxonomy) {
+        return self::query()->where(compact('taxonomy'))->where(['status'=> Term::STATUS_PUBLISHED])->get();
+    }
+
+    /**
+
+    /**
      * @param $slug
      * @return Term
      */
-    public static function findBySlug ($slug) {
-        return self::query()->where(compact('slug'))->first();
+    public static function findBySlug ($taxonomy, $slug) {
+        return self::query()->where(compact('taxonomy', 'slug'))->first();
     }
 
     /**
@@ -45,9 +55,10 @@ trait TermModelTrait
      */
     public static function fromItemId($taxonomy, $item_id)
     {
-       return self::query('t.*')->from('@taxonomy_term t')
+       return self::query()->select('t.*')->from('@taxonomy_term t')
            ->leftJoin('@taxonomy_term_item ti', 'ti.term_id = t.id')
            ->where([
+               't.status' => Term::STATUS_PUBLISHED,
                't.taxonomy' => $taxonomy,
                'ti.item_id' => $item_id,
            ])
@@ -104,7 +115,7 @@ trait TermModelTrait
 
         // Update own path
         $path = '/'.$term->slug;
-        if ($term->parent_id && $parent = Term::find($term->parent_id) and $parent->menu == $term->menu) {
+        if ($term->parent_id && $parent = Term::find($term->parent_id) and $parent->taxonomy == $term->taxonomy) {
             $path = $parent->path.$path;
         } else {
             // set Parent to 0, if old parent is not found
@@ -120,6 +131,11 @@ trait TermModelTrait
         }
 
         $term->path = $path;
+        if ($term->getTaxonomy()->type == 'hierarchical') {
+            $term->link = $term->getTaxonomy()->route . $path . '/term';
+        } else {
+            $term->link = $term->getTaxonomy()->route;
+        }
 
         // Set priority
         if (!$id) {

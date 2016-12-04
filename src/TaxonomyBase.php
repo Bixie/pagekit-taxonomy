@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Bixie\Taxonomy\Taxonomy;
+namespace Bixie\Taxonomy;
 
 
 
@@ -34,6 +34,10 @@ class TaxonomyBase {
      * @var array
      */
     public $options;
+    /**
+     * @var Term[]
+     */
+    protected $terms;
 
     /**
      * TaxonomyBase constructor.
@@ -54,8 +58,37 @@ class TaxonomyBase {
     }
 
     /**
+     * @param int $id
+     * @return Term
+     */
+    public function termById ($id)
+    {
+        return Term::find($id);
+    }
+
+    /**
      * @param string $slug
-     * @return static[]
+     * @return Term
+     */
+    public function termBySlug ($slug)
+    {
+        return Term::findBySlug($this->name, $slug);
+    }
+
+    /**
+     * @return Term[]
+     */
+    public function terms ()
+    {
+        if (!isset($this->terms)) {
+            $this->terms = Term::byTaxonomy($this->name);
+        }
+        return $this->terms;
+    }
+
+    /**
+     * @param string $slug
+     * @return array
      */
     public function itemIds ($slug)
     {

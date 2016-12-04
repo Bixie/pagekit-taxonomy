@@ -74,6 +74,26 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Route("/updateOrder", methods="POST")
+     * @Request({"taxonomyName", "terms": "array"}, csrf=true)
+     */
+    public function updateOrderAction($taxonomyName, $terms_data = [])
+    {
+        $terms = App::taxonomy($taxonomyName)->terms($taxonomyName);
+        foreach ($terms_data as $data) {
+
+            if ($term = $terms[$data['id']]) {
+
+                $term->save([
+                    'priority' => $data['order'],
+                    'parent_id' => $data['parent_id'] ?: 0,
+                ]);
+            }
+        }
+
+        return ['message' => 'success'];
+    }
+    /**
      * @Route("/{id}", methods="DELETE", requirements={"id"="\d+"})
      * @Request({"id": "int"}, csrf=true)
      */
@@ -131,9 +151,9 @@ class TaxonomyApiController {
 
     /**
      * @Route("/item", methods="POST")
-     * @Request({"taxonomyName": "string", "item_id": "int", "terms": "array", "id": "int"}, csrf=true)
+     * @Request({"taxonomyName": "string", "item_id": "int", "terms": "array"}, csrf=true)
      */
-    public function saveItemAction($taxonomyName, $item_id, $terms, $id = 0)
+    public function saveItemAction($taxonomyName, $item_id, $terms)
     {
         if (!$taxonomy = App::taxonomy($taxonomyName)) {
             return App::abort(400, 'Taxonomy not found');

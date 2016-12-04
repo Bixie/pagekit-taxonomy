@@ -28,7 +28,7 @@ class TermItem implements \JsonSerializable
      * Retrieves all terms for a slug.
      * @param  string $taxonomy
      * @param  string $slug
-     * @return static[]
+     * @return array
      */
     public static function itemIdsFromSlug($taxonomy, $slug)
     {

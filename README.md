@@ -1,8 +1,16 @@
 # Taxonomy
 
-Taxonomy for Pagekit
+Taxonomy for Pagekit. This code is an alpha version. It is the intention to move this module to the Pagekit namespace when finished.
+Developers are encouraged to test it with their extensions. Feedback is appreciated.
 
-### Register a taxonomy
+#### Todo
+
+- Set default term for canonical link
+- Set canonical link for items with multiple terms
+- optimize loading and caching in the models
+- ordering of terms and of items within terms
+
+## Registering a taxonomy
 
 By default a simple tag-taxonomy is added. Only define the route where your taxonomy overview page will live. 
 For configuring the route see [Attach a view for a term](#attach-a-view-for-a-term).
@@ -17,20 +25,6 @@ $app->on('boot', function ($event, $app) {
 
 You can define more complex taxonomies:
 
-Categories;
-
-```php
-$app['taxonomy']->register('extension.product.category', [
-    'type' => 'hierarchical',
-    'label_single' => __('Category'),
-    'label_plural' => __('Categories'),
-    'route' => '@extension/product/category',
-    'options' => [
-        'term_type' => 'term-content',
-    ],
-]);
-```
-
 Attributes;
 
 ```php
@@ -43,6 +37,58 @@ $app['taxonomy']->register('extension.product.color', [
         'term_type' => 'term-raw',
     ],
 ]);
+```
+
+For hierarchical terms, things get a git more complicated. More route-info and code from your extension is needed to create 
+the correct routes for the terms.
+
+```php
+$app['taxonomy']->register('extension.product.category', [
+    'type' => 'hierarchical',
+    'label_single' => __('Category'),
+    'label_plural' => __('Categories'),
+    'route' => '@extension/item/category',
+    'options' => [
+        'term_type' => 'term-content',
+        'term_controller' => '\Vendor\Extension\Controller\ItemSiteController::categoryAction',
+        'item_controller' => '\Vendor\Extension\Controller\ItemSiteController::itemAction',
+        'item_resolver' => [
+            'pattern' => '/{slug}',
+            'resolver' => '\Vendor\Extension\ItemUrlResolver',
+        ],
+    ],
+]);
+```
+
+See [routing hierachical terms](#Attach-routes-for-a-hierarchical-term) for more details.
+
+### Single Taxonomy
+
+One level of terms will be available. Used for properties, tags, etc.
+
+### Hierarchical Taxonomy
+
+Terms can be nested into levels. Used for categorizing.
+
+### Term type-raw/type-content
+
+A raw term only contains a label and slug. The content type can also have an image and content. The parsed markdown 
+content is available in the json-property `content` or via `$term->getContent()`.
+
+In the future it should be possible to register your own term types.
+
+## Taxonomy javascript interface
+
+When using the Vue app, make sure to include the taxonomy javascript in your view:
+
+```php
+$view->script('taxonomy');
+```
+
+or simply add it to your dependancies;
+
+```php
+$view->script('item-edit', 'vendor/extension:app/bundle/item-edit.js', ['vue', 'taxonomy']); ?>
 ```
 
 ### Manage terms
@@ -77,11 +123,11 @@ For many terms per item;
 <input-terms-many taxonomy-name="extension.item.tag" :item_id="item.id"></input-terms-many>
 ```
 
-### API
+## API
 
 The taxonomy module provides an API to manage your taxonomies and items.
 
-#### Get taxonomy
+### Get taxonomy
 
 Get the registered Taxonomy object from the manager.
 
@@ -93,46 +139,130 @@ or
 $taxonomy = $app['taxonomy']('extension.item.tag');
 ```
 
-#### Save terms to item
+### Save terms to item
 
 Use the [Vue components](#attach-terms-to-your-items) to manage your terms or do it yourself via the API:
 
 ```php
+/**
+ * @param int $item_id
+ * @param array $terms
+ */
 $taxonomy = App::taxonomy('extension.item.tag')->saveTerms($item_id, $terms);
 ```
 
 Where `$terms` is an array of associative array of term data, at least including the id.
 
-#### Get terms of an item
+### Get all taxonomies 
 
-To retrieve the terms attached to an item:
+To retrieve all registered taxonomies:
 
 ```php
+/**
+ * @return TaxonomyBase[]
+ */
+$taxonomy = App::taxonomy('extension.item.tag')->all();
+```
+
+### Get all terms 
+
+To retrieve all published terms of a taxonomy:
+
+```php
+/**
+ * @return Term[]
+ */
+$taxonomy = App::taxonomy('extension.item.tag')->terms($item_id);
+```
+
+### Get terms root
+
+Retrieves the root node of the taxonomy terms. This node can be iterated to create a term tree. Only available in hierarchical taxonomies.
+
+```php
+/**
+ * @param  array  $parameters ['start_level' => 1, 'depth' => PHP_INT_MAX, 'mode' => 'all']
+ * @return Term|null
+ */
+$root_term = App::taxonomy('extension.item.tag')->getRoot($parameters);
+```
+
+For more details on usage of the root, see the menu documentation.
+
+### Get terms of an item
+
+To retrieve the published terms attached to an item:
+
+```php
+/**
+ * @param int $item_id
+ * @return Term[]
+ */
 $taxonomy = App::taxonomy('extension.item.tag')->itemTerms($item_id);
 ```
 
-#### Get item ids of a term
+### Get item ids of a term
 
 To retrieve the item ids attached to a term, you can get them from the slug of the term:
 
 ```php
+/**
+ * @param string $slug
+ * @return array of item ids
+ */
 $taxonomy = App::taxonomy('extension.item.tag')->itemIds($slug);
 ```
 
-#### Get a term
+### Get a term
 
-Use the Term model directly to retrieve a term by id or slug:
+Use the Term model directly to retrieve a term by slug or id:
 
 ```php
-$term = Term::findBySlug($slug);
-$term = Term::find($id);
+/**
+ * @param string $slug
+ * @return Term
+ */
+$term = App::taxonomy('extension.item.tag')->termBySlug($slug);
+/**
+ * @param int $id
+ * @return Term
+ */
+$term = App::taxonomy('extension.item.tag')->termById($slug);
 ```
 
-Remember to include the correct use statement.
+### Get path of a term
 
-### Attach a view for a term
+To retrieve the path of ancestors including the term itself from a hierarchical typed term;
 
-To route the view for the tag to link to, just register the route via your controller.
+```php
+/**
+ * @param  $term
+ * @return Term[]
+ */
+$taxonomy = App::taxonomy('extension.item.tag')->getPath($term);
+```
+
+### Get children of a term
+
+To retrieve the direct children from a hierarchical typed term;
+
+```php
+/**
+ * @param Term $term
+ * @return Term[]
+ */
+$taxonomy = App::taxonomy('extension.item.tag')->getChildren($term);
+```
+
+## Routing
+
+Routing can be done directly from your extensions controllers.
+
+### Attach a route for a single term
+
+To route the view for the single term (eg tag) to link to, register the route `/tag/{slug}` in the controller whos route-name 
+was registered in the taxonomy.
+The slug of the term is appended to the functions arguments.
 
 ```php
 /**
@@ -141,9 +271,12 @@ To route the view for the tag to link to, just register the route via your contr
  */
 public function tagAction ($slug) {
 
-    $term = Term::findBySlug($slug);
+    if (!$taxonomy = App::taxonomy('game2art.tag.game2art_comic')) {
+        return App::abort(400, 'Taxonomy not found');
+    }
 
-    $item_ids = App::taxonomy('extension.item.tag')->itemIds($slug);
+    $term = $taxonomy->termBySlug($slug);
+    $item_ids = $taxonomy->itemIds($slug);
 
     $items = Item::query()->whereInSet('id', $item_ids)->orderBy('title')->get();
 
@@ -153,8 +286,110 @@ public function tagAction ($slug) {
             'name' => 'vendor/extension/items_tag.php'
         ],
         'items' => array_values($items),
-        'term' => $term,
+        'tag' => $term,
     ];
 }
 ```
+
+### Attach routes for a hierarchical term
+
+For reference, the example of a hierarchical taxonomy:
+
+```php
+$app['taxonomy']->register('extension.product.category', [
+    'type' => 'hierarchical',
+    'label_single' => __('Category'),
+    'label_plural' => __('Categories'),
+    'route' => '@extension/item',
+    'options' => [
+        'term_type' => 'term-content',
+        'term_controller' => '\Vendor\Extension\Controller\ItemSiteController::categoryAction',
+        'item_controller' => '\Vendor\Extension\Controller\ItemSiteController::itemAction',
+        'item_resolver' => [
+            'pattern' => '/{slug}',
+            'resolver' => '\Vendor\Extension\ItemUrlResolver',
+        ],
+    ],
+]);
+```
+
+#### Term item route
+
+Taxonomy will create a separate route for every term in the hierarchical taxonomy. They are appended to the route defined 
+in the taxonomy and ending in `/term`. In the example code that could become: `@extension/item/category/cat-2/term`, 
+`@extension/item/category/cat-1/cat-2/term` etc. The link is stored in the `link` property of the `Term` object.
+The term link is mounted to the `term_controller` provided in the opions.
+
+In the controller the term id is appended to the arguments of the function.
+
+```php
+/**
+ * @Request({"filter": "array", "page":"int"})
+ * @return array
+ */
+public function categoryAction ($filter = [], $page = null, $term_id = 0) {
+
+    if (!$taxonomy = App::taxonomy('game2art.product.category')) {
+        return App::abort(400, 'Taxonomy not found');
+    }
+
+    $term = $taxonomy->termById($term_id);
+    $item_ids = $taxonomy->itemIds($slug);
+    
+    //apply filtering and pagination
+    
+    $items = Item::query()->whereInSet('id', $item_ids)->orderBy('title')->get();
+    
+    return [
+        '$view' => [
+            'title' => __('Items in category %category%', ['%category%' => $term->title]),
+            'name' => 'vendor/extension/items_category.php'
+        ],
+        'items' => array_values($items),
+        'subcategories' => $taxonomy->getChildren($term),
+        'category' => $term,
+    ];
+}
+```
+
+#### Term item route
+
+A route for the items that belong to the terms is mounted to the `item_controller` provided in the opions. In the example code 
+that could become: `@extension/item/category/cat-2/item`, `@extension/item/category/cat-1/cat-2/item` etc. You can use 
+these links to generate urls for your items.
+
+When an url resolver is provided, an url alias will be registered for all item-routes. This way you can generate sef links 
+to your items. In the example the pattern is appended to the link and attached to the resolver.
+
+`@extension/item/category/cat-2/item/{slug}` => `\Vendor\Extension\ItemUrlResolver`
+
+In the controller the term id is appended to the arguments of the function, your url resolver should convert the slug to an id.
+
+```php
+/**
+ * @Route("/{id}", name="/id")
+ */
+public function itemAction ($id = 0, $term_id = 0) {
+
+    //access checks etc
+    $item = Item::find($id);
+
+    if ($term_id) {
+        $terms = App::taxonomy('extension.product.category')->itemTerms($id);
+        if (!isset($terms[$term_id])) {
+            App::abort(404, __('Item not found in category.'));
+        }
+    }
+    
+    return [
+        '$view' => [
+            'title' => __('Item details'),
+            'name' => 'vendor/extension/item.php'
+        ],
+        'item' => $item,
+        'category' => $terms[$term_id],
+    ];
+}
+```
+
 

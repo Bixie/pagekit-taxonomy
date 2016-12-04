@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Bixie\Taxonomy\Taxonomy;
+namespace Bixie\Taxonomy;
 
 use Pagekit\Application;
 use Pagekit\Application\Exception;
@@ -18,9 +18,12 @@ class TaxonomyManager {
      */
     protected $taxonomies = [];
 
+    /**
+     * @var array
+     */
     protected $types = [
-        'single' => 'Bixie\\Taxonomy\\Taxonomy\\Single',
-        'hierarchical' => 'Bixie\\Taxonomy\\Taxonomy\\Hierarchical',
+        'single' => 'Bixie\\Taxonomy\\Single',
+        'hierarchical' => 'Bixie\\Taxonomy\\Hierarchical',
     ];
 
     /**
@@ -46,16 +49,6 @@ class TaxonomyManager {
     }
 
     /**
-     * Get a registered taxonomy
-     * @param string $name
-     * @return TaxonomyBase|null
-     */
-    public function get ($name)
-    {
-        return isset($this->taxonomies[$name]) ? $this->taxonomies[$name] : null;
-    }
-
-    /**
      * Register a taxonomy
      * @param string $name
      * @param array  $config
@@ -75,10 +68,32 @@ class TaxonomyManager {
             'route' => '',
             'options' => [
                 'term_type' => 'term-raw',
+                'term_controller' => '',
+                'item_controller' => '',
+                'item_resolver' => [],
             ],
         ], $config));
 
         return $this;
+    }
+
+    /**
+     * Get a registered taxonomy
+     * @param string $name
+     * @return TaxonomyBase|null
+     */
+    public function get ($name)
+    {
+        return isset($this->taxonomies[$name]) ? $this->taxonomies[$name] : null;
+    }
+
+    /**
+     * Get all taxonomies
+     * @return TaxonomyBase[]
+     */
+    public function all ()
+    {
+        return $this->taxonomies;
     }
 
 }

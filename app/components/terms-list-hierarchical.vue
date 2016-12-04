@@ -32,7 +32,7 @@
             <tbody>
             <tr class="check-item" v-for="term in terms" :class="{'uk-active': active(term)}">
                 <td><input type="checkbox" name="id" :value="term.id" :disabled="disabled(term)"number></td>
-                <td>
+                <td :style="indention(term)">
                     <span v-if="disabled(term)" class="uk-text-muted">{{ term.title }}</span>
                     <a v-else @click="select(term)">{{ term.title }}</a>
                 </td>
@@ -56,7 +56,7 @@
 
     module.exports = {
 
-        name: 'terms-list-single',
+        name: 'terms-list-hierarchical',
 
         replace: false,
 
@@ -74,11 +74,8 @@
                     statuses: {},
                     taxonomyName: this.taxonomy.name,
                     filter: {search: '', status: 1, order: 'title asc'},
-                    limit: this.limit,
-                    page: 0,
+                    limit: 0,
                 },
-                pages: 0,
-                count: '',
                 selected: [],
                 form: {},
             }
@@ -86,7 +83,7 @@
 
         created() {
             this.resource = this.$resource('api/taxonomy{/id}');
-            this.$watch('config.page', this.load, {immediate: true});
+            this.load();
         },
 
         watch: {
@@ -113,13 +110,16 @@
                 return this.excluded.indexOf(term.id) != -1;
             },
 
+            indention(term) {
+                var parts = term.path.split('/');
+                return `padding-left: ${(parts.length - 2) * 20}px`;
+            },
+
             load() {
                 this.resource.query(this.config).then(res => {
                     var data = res.data;
 
                     this.$set('terms', data.terms);
-                    this.$set('pages', data.pages);
-                    this.$set('count', data.count);
                     this.$set('selected', []);
                     this.$set('config.statuses', data.statuses);
                 }, () => this.$notify('Loading failed.', 'danger'));

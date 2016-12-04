@@ -6,7 +6,13 @@ return [
 
 	'type' => 'extension',
 
-	'main' => 'Bixie\\Taxonomy\\TaxonomyModule',
+	'main' => function ($app) {
+
+        $app['taxonomy'] = function ($app) {
+            return new Bixie\Taxonomy\TaxonomyManager($app);
+        };
+
+    },
 
 	'autoload' => [
 
@@ -34,8 +40,14 @@ return [
 	],
 
 	'events' => [
+        'boot' => function ($event, $app) {
+            $app->subscribe(
+                new \Bixie\Taxonomy\Event\RouteListener()
+            );
+        },
+
         'view.scripts' => function ($event, $scripts) use ($app) {
-            $scripts->register('taxonomy', 'taxonomy:app/bundle/taxonomy.js', ['vue']);
+            $scripts->register('taxonomy', 'taxonomy:app/bundle/taxonomy.js', ['vue', 'editor', 'uikit-nestable']);
         },
 	]
 

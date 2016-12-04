@@ -40,31 +40,28 @@
             <thead>
             <tr>
                 <th class="pk-table-width-minimum"><input type="checkbox" v-check-all:selected.literal="input[name=id]" number></th>
+                <th class="pk-table-min-width-200" v-order:title="config.filter.order">{{ 'Title' | trans }}</th>
                 <th class="pk-table-width-100 uk-text-center">
                     <input-filter :title="$trans('Status')" :value.sync="config.filter.status" :options="statusOptions"></input-filter>
                 </th>
-                <th class="pk-table-min-width-200" v-order:title="config.filter.order">{{ 'Title' | trans }}</th>
-                <th class="pk-table-min-width-200" v-order:slug="config.filter.order">{{ 'Slug' | trans }}</th>
-                <th class="pk-table-width-200">{{ '# Items' | trans }}</th>
-                <th class="pk-table-width-200">{{ 'URL' | trans }}</th>
+                <th class="pk-table-width-100">{{ '# Items' | trans }}</th>
+                <th class="pk-table-width-150">{{ 'URL' | trans }}</th>
             </tr>
             </thead>
             <tbody>
             <tr class="check-item" v-for="term in terms" :class="{'uk-active': active(term)}">
                 <td><input type="checkbox" name="id" :value="term.id" number></td>
+                <td>
+                    <a @click="editTerm(term)">{{ term.title }}</a><br/>
+                    <small class="uk-text-muted">{{ term.slug }}</small>
+                </td>
                 <td class="uk-text-center">
                     <a title="{{ getStatusText(term) }}" :class="{
                                 'pk-icon-circle-danger': term.status == 0,
                                 'pk-icon-circle-success': term.status == 1
                             }" @click="toggleStatus(term)"></a>
                 </td>
-                <td>
-                    <a @click="editTerm(term)">{{ term.title }}</a>
-                </td>
-                <td>
-                    {{ term.slug }}
-                </td>
-                <td>
+                <td class="uk-text-center">
                     #
                 </td>
                 <td class="pk-table-text-break">
@@ -174,7 +171,10 @@
             },
 
             saveTerm(term) {
-                this.save(term).then(() => this.$refs.form.close());
+                this.save(term).then(() => {
+                    this.$notify('Term saved.');
+                    this.$refs.form.close();
+                });
             },
 
             active(term) {
@@ -240,6 +240,7 @@
 
         partials: {
             'term-raw': require('../templates/term-raw.html'),
+            'term-content': require('../templates/term-content.html'),
         },
     };
 

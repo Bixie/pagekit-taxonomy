@@ -12,7 +12,7 @@
                 {{ 'Select' | trans }} {{ taxonomy.label_single }}</button>
         </p>
 
-        <v-modal v-ref:modal large>
+        <v-modal v-ref:modal>
 
             <div :is="'terms-list-' + taxonomy.type" v-ref:terms-list
                         :taxonomy="taxonomy"

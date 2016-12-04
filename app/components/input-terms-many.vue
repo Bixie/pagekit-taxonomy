@@ -17,7 +17,7 @@
                 {{ 'Select' | trans }} {{ taxonomy.label_plural }}</button>
         </p>
 
-        <v-modal v-ref:modal large>
+        <v-modal v-ref:modal>
 
             <div :is="'terms-list-' + taxonomy.type" v-ref:terms-list
                  :taxonomy="taxonomy"
@@ -120,7 +120,7 @@
         },
 
         components: {
-            'terms-list-single': require('./terms-list-single.vue'),
+            'terms-list-hierarchical': require('./terms-list-hierarchical.vue'),
         },
 
     };

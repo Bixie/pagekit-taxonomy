@@ -2,7 +2,7 @@
 
 namespace Bixie\Taxonomy\Model;
 
-use Bixie\Taxonomy\Taxonomy\TaxonomyBase;
+use Bixie\Taxonomy\TaxonomyBase;
 use Pagekit\Application as App;
 use Pagekit\System\Model\DataModelTrait;
 use Pagekit\System\Model\NodeInterface;
@@ -57,6 +57,7 @@ class Term implements NodeInterface, \JsonSerializable
 
     /** @var array */
     protected static $properties = [
+        'content' => 'getContent',
         'url' => 'getUrl',
     ];
 
@@ -89,6 +90,16 @@ class Term implements NodeInterface, \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getContent () {
+        if ($content = $this->get('content')) {
+            return App::content()->applyPlugins($content, ['term' => $this, 'markdown' => $this->get('markdown'), 'readmore' => true]);
+        }
+        return '';
+    }
+
+    /**
      * Gets the node URL.
      *
      * @param  mixed  $referenceType
@@ -96,7 +107,11 @@ class Term implements NodeInterface, \JsonSerializable
      */
     public function getUrl($referenceType = false)
     {
-        return App::url($this->getTaxonomy()->route, ['slug' => $this->slug], $referenceType);
+        if ($this->getTaxonomy()->type == 'hierarchical') {
+            return App::url($this->link, [], $referenceType);
+        } else {
+            return App::url($this->link, ['slug' => $this->slug], $referenceType);
+        }
     }
 
     /**
@@ -104,6 +119,6 @@ class Term implements NodeInterface, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->toArray(['url' => $this->getUrl('base')]);
+        return $this->toArray(['url' => $this->getUrl('base')], ['_taxonomy']);
     }
 }
