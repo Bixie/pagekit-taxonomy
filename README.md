@@ -13,7 +13,7 @@ Developers are encouraged to test it with their extensions. Feedback is apprecia
 ## Registering a taxonomy
 
 By default a simple tag-taxonomy is added. Only define the route where your taxonomy overview page will live. 
-For configuring the route see [Attach a view for a term](#attach-a-view-for-a-term).
+For configuring the route see [routing](#routing).
 
 ```php
 $app->on('boot', function ($event, $app) {
@@ -60,7 +60,7 @@ $app['taxonomy']->register('extension.product.category', [
 ]);
 ```
 
-See [routing hierachical terms](#Attach-routes-for-a-hierarchical-term) for more details.
+See [routing](#routing) for more details.
 
 ### Single Taxonomy
 
@@ -90,6 +90,8 @@ or simply add it to your dependancies;
 ```php
 $view->script('item-edit', 'vendor/extension:app/bundle/item-edit.js', ['vue', 'taxonomy']); ?>
 ```
+
+When using the term-content type, don't forget to add the codemirror style to your view with `$view->style('codemirror')`.
 
 ### Manage terms
 
@@ -184,7 +186,7 @@ Retrieves the root node of the taxonomy terms. This node can be iterated to crea
  * @param  array  $parameters ['start_level' => 1, 'depth' => PHP_INT_MAX, 'mode' => 'all']
  * @return Term|null
  */
-$root_term = App::taxonomy('extension.item.tag')->getRoot($parameters);
+$root_term = App::taxonomy('extension.product.category')->getRoot($parameters);
 ```
 
 For more details on usage of the root, see the menu documentation.
@@ -313,7 +315,7 @@ $app['taxonomy']->register('extension.product.category', [
 ]);
 ```
 
-#### Term item route
+#### Term route
 
 Taxonomy will create a separate route for every term in the hierarchical taxonomy. They are appended to the route defined 
 in the taxonomy and ending in `/term`. In the example code that could become: `@extension/item/category/cat-2/term`, 
