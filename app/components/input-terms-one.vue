@@ -116,6 +116,7 @@
 
         components: {
             'terms-list-single': require('./terms-list-single.vue'),
+            'terms-list-hierarchical': require('./terms-list-hierarchical.vue'),
         },
 
     };
