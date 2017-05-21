@@ -39,7 +39,7 @@ $app['taxonomy']->register('extension.product.color', [
 ]);
 ```
 
-For hierarchical terms, things get a git more complicated. More route-info and code from your extension is needed to create 
+For hierarchical terms, things get a bit more complicated. More route-info and code from your extension is needed to create 
 the correct routes for the terms.
 
 ```php
@@ -90,8 +90,6 @@ or simply add it to your dependancies;
 ```php
 $view->script('item-edit', 'vendor/extension:app/bundle/item-edit.js', ['vue', 'taxonomy']); ?>
 ```
-
-When using the term-content type, don't forget to add the codemirror style to your view with `$view->style('codemirror')`.
 
 ### Manage terms
 
@@ -163,7 +161,7 @@ To retrieve all registered taxonomies:
 /**
  * @return TaxonomyBase[]
  */
-$taxonomy = App::taxonomy('extension.item.tag')->all();
+$taxonomy = App::taxonomy()->all();
 ```
 
 ### Get all terms 
@@ -174,7 +172,7 @@ To retrieve all published terms of a taxonomy:
 /**
  * @return Term[]
  */
-$taxonomy = App::taxonomy('extension.item.tag')->terms($item_id);
+$taxonomy = App::taxonomy('extension.item.tag')->terms();
 ```
 
 ### Get terms root
@@ -331,12 +329,12 @@ In the controller the term id is appended to the arguments of the function.
  */
 public function categoryAction ($filter = [], $page = null, $term_id = 0) {
 
-    if (!$taxonomy = App::taxonomy('game2art.product.category')) {
+    if (!$taxonomy = App::taxonomy('extension.product.category')) {
         return App::abort(400, 'Taxonomy not found');
     }
 
     $term = $taxonomy->termById($term_id);
-    $item_ids = $taxonomy->itemIds($slug);
+    $item_ids = $taxonomy->itemIds($term->slug);
     
     //apply filtering and pagination
     

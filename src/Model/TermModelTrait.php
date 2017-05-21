@@ -34,7 +34,10 @@ trait TermModelTrait
      * @return Term[]
      */
     public static function byTaxonomy ($taxonomy) {
-        return self::query()->where(compact('taxonomy'))->where(['status'=> Term::STATUS_PUBLISHED])->get();
+        return self::query()->where(compact('taxonomy'))
+            ->orderBy('title', 'asc')
+            ->where(['status'=> Term::STATUS_PUBLISHED])
+            ->get();
     }
 
     /**

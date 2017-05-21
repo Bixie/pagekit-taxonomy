@@ -74,7 +74,7 @@
                     statuses: {},
                     taxonomyName: this.taxonomy.name,
                     filter: {search: '', status: 1, order: 'title asc'},
-                    limit: 0,
+                    limit: 1000,
                 },
                 selected: [],
                 form: {},

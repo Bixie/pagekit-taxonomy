@@ -1,5 +1,5 @@
 {
-  "name": "taxonomy",
+  "name": "bixie/taxonomy",
   "type": "pagekit-extension",
   "version": "0.0.1",
   "title": "Taxonomy",

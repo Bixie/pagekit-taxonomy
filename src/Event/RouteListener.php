@@ -20,7 +20,13 @@ class RouteListener implements EventSubscriberInterface
                 and ($taxonomy->options['term_controller'] && $taxonomy->options['item_controller'])
                 and $node = Node::query()->where(['link' => $taxonomy->route])->first()) {
 
-                foreach ($taxonomy->terms() as $term) {
+                //register the deepest paths first
+                $terms = $taxonomy->terms();
+                uasort($terms, function($a, $b) {
+                    return strcmp(substr_count($a->path, '/'), substr_count($b->path, '/')) * -1;
+                });
+
+                foreach ($terms as $term) {
 
                     $route = [
                         'label' => $term->title,

@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <div class="uk-grid">
+        <div v-if="selected.length" class="uk-grid">
             <div v-for="term in selected" class="uk-width-1-1">
                 <div class="uk-badge uk-flex uk-flex-middle uk-margin-small-bottom"
                      track-by="$index">
@@ -52,7 +52,7 @@
         data() {
             return {
                 taxonomy: false,
-                selected: false,
+                selected: [],
             };
         },
 

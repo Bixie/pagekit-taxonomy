@@ -11,6 +11,7 @@ use Pagekit\Application as App;
 class TaxonomyApiController {
 
     /**
+     * Get terms of a taxonomy
      * @Route("/", methods="GET")
      * @Request({"taxonomyName": "string", "filter": "array", "page":"int", "limit":"int"})
      */
@@ -41,7 +42,7 @@ class TaxonomyApiController {
         }
 
         $default = 20;
-        $limit   = min(max(0, $limit), $default) ?: $default;
+        $limit   = max(0, $limit) ?: $default;
         $count   = $query->count();
         $pages   = ceil($count / $limit);
         $page    = max(0, min($pages - 1, $page));

@@ -108,7 +108,7 @@ class Term implements NodeInterface, \JsonSerializable
     public function getUrl($referenceType = false)
     {
         if ($this->getTaxonomy()->type == 'hierarchical') {
-            return App::url($this->link, [], $referenceType);
+            return App::url($this->link, ['term_id' => $this->id], $referenceType);
         } else {
             return App::url($this->link, ['slug' => $this->slug], $referenceType);
         }
@@ -119,6 +119,6 @@ class Term implements NodeInterface, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->toArray(['url' => $this->getUrl('base')], ['_taxonomy']);
+        return $this->toArray([], ['_taxonomy']);
     }
 }

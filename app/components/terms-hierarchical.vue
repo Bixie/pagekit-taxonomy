@@ -114,6 +114,7 @@
                     taxonomyName: this.taxonomyName,
                     filter: this.$session.get(`taxonomy.filter.${this.taxonomyName}`, {search: '', order: 'title asc'}),
                     page: 0,
+                    limit: 1000,
                 },
                 pages: 0,
                 count: '',
