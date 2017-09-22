@@ -107,10 +107,20 @@ class Term implements NodeInterface, \JsonSerializable
      */
     public function getUrl($referenceType = false)
     {
-        if ($this->getTaxonomy()->type == 'hierarchical') {
-            return App::url($this->link, ['term_id' => $this->id], $referenceType);
+        if (is_array($this->getTaxonomy()->link) && !empty($this->getTaxonomy()->link['route'])) {
+            $params = [];
+            if (!empty($this->getTaxonomy()->link['params'])) {
+                foreach ($this->getTaxonomy()->link['params'] as $key => $term_key) {
+                    $params[$key] = isset($this->$term_key) ? $this->$term_key : '';
+                }
+            }
+            return App::url($this->link, $params, $referenceType);
         } else {
-            return App::url($this->link, ['slug' => $this->slug], $referenceType);
+            if ($this->getTaxonomy()->type == 'hierarchical') {
+                return App::url($this->link, ['term_id' => $this->id], $referenceType);
+            } else {
+                return App::url($this->link, ['slug' => $this->slug], $referenceType);
+            }
         }
     }
 
