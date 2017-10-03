@@ -27,6 +27,10 @@ class TaxonomyBase {
      */
     public $label_plural;
     /**
+     * @var array
+     */
+    public $link;
+    /**
      * @var string
      */
     public $route;
@@ -51,6 +55,7 @@ class TaxonomyBase {
         $this->label_plural = $config['label_plural'];
 
         $this->type = $config['type'];
+        $this->link = $config['link'];
         $this->route = $config['route'];
 
         $this->options = $config['options'];

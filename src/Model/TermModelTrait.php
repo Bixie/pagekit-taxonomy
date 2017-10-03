@@ -134,10 +134,14 @@ trait TermModelTrait
         }
 
         $term->path = $path;
-        if ($term->getTaxonomy()->type == 'hierarchical') {
-            $term->link = $term->getTaxonomy()->route . $path . '/term';
+        if (is_array($term->getTaxonomy()->link) && !empty($term->getTaxonomy()->link['route'])) {
+            $term->link = $term->getTaxonomy()->link['route'];
         } else {
-            $term->link = $term->getTaxonomy()->route;
+            if ($term->getTaxonomy()->type == 'hierarchical') {
+                $term->link = $term->getTaxonomy()->route . $path . '/term';
+            } else {
+                $term->link = $term->getTaxonomy()->route;
+            }
         }
 
         // Set priority
