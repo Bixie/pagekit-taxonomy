@@ -30,7 +30,6 @@ return [
                 $table->addColumn('item_id', 'integer', ['unsigned' => true, 'length' => 10, 'default' => 0]);
                 $table->addColumn('term_id', 'integer', ['unsigned' => true, 'length' => 10, 'default' => 0]);
                 $table->addColumn('term_ordering', 'integer', ['default' => 0]);
-                $table->addColumn('taxonomy', 'string', ['length' => 255]);
                 $table->setPrimaryKey(['id']);
             });
         }
