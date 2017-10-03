@@ -14,7 +14,7 @@
 
         <p>
             <button type="button" class="uk-button uk-button-small" @click="pick">
-                {{ 'Select' | trans }} {{ taxonomy.label_plural }}</button>
+                {{ 'Select' | trans }} {{ taxonomy.label_plural | trans }}</button>
         </p>
 
         <v-modal v-ref:modal>
@@ -120,6 +120,7 @@
         },
 
         components: {
+            'terms-list-single': require('./terms-list-single.vue'),
             'terms-list-hierarchical': require('./terms-list-hierarchical.vue'),
         },
 

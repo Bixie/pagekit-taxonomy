@@ -9,7 +9,7 @@
 
         <p>
             <button type="button" class="uk-button uk-button-small" @click="pick">
-                {{ 'Select' | trans }} {{ taxonomy.label_single }}</button>
+                {{ 'Select' | trans }} {{ taxonomy.label_single | trans }}</button>
         </p>
 
         <v-modal v-ref:modal>

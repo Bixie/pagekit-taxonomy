@@ -63,8 +63,9 @@ class TaxonomyManager {
 
         $this->taxonomies[$name] = new $this->types[$config['type']]($name, array_merge([
             'type' => 'single',
-            'label_single' => __('Tag'),
-            'label_plural' => __('Tags'),
+            'label_single' => 'Tag',
+            'label_plural' => 'Tags',
+            'link' => [],
             'route' => '',
             'options' => [
                 'term_type' => 'term-raw',

@@ -3,7 +3,7 @@
     <div v-if="taxonomy" class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
         <div class="uk-flex uk-flex-middle uk-flex-wrap" data-uk-margin>
 
-            <h2 class="uk-margin-remove">{{ taxonomy.label_plural }}</h2>
+            <h2 class="uk-margin-remove">{{ taxonomy.label_plural | trans }}</h2>
 
             <div class="uk-margin-left" v-show="selected.length">
                 <ul class="uk-subnav pk-subnav-icon">
@@ -13,7 +13,7 @@
                            data-uk-tooltip="{delay: 500}" @click="status(0)"></a></li>
                     <li><a class="pk-icon-delete pk-icon-hover" :title="'Delete' | trans"
                            data-uk-tooltip="{delay: 500}" @click.prevent="remove"
-                           v-confirm="'Delete terms?' | trans"></a>
+                           v-if="true" v-confirm="'Delete terms?' | trans"></a>
                     </li>
                 </ul>
             </div>
@@ -29,7 +29,7 @@
 
             <div>
                 <button type="button" class="uk-button uk-button-primary" @click="editTerm()">
-                    {{ 'Add' | trans }} {{ taxonomy.label_single }}</button>
+                    {{ 'Add' | trans }} {{ taxonomy.label_single | trans }}</button>
             </div>
 
         </div>

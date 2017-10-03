@@ -3,7 +3,7 @@
     <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
         <div class="uk-flex uk-flex-middle uk-flex-wrap" data-uk-margin>
 
-            <h2 class="uk-margin-remove">{{ taxonomy.label_plural }}</h2>
+            <h2 class="uk-margin-remove">{{ taxonomy.label_plural | trans }}</h2>
 
             <div class="pk-search">
                 <div class="uk-search">
@@ -15,7 +15,7 @@
         <div>
 
             <button type="button" class="uk-button uk-button-primary" @click="add">
-                {{ 'Add' | trans }} {{ taxonomy.label_single }}</button>
+                {{ 'Add' | trans }} {{ taxonomy.label_single | trans }}</button>
 
         </div>
     </div>
@@ -31,7 +31,7 @@
             </thead>
             <tbody>
             <tr class="check-item" v-for="term in terms" :class="{'uk-active': active(term)}">
-                <td><input type="checkbox" name="id" :value="term.id" :disabled="disabled(term)"number></td>
+                <td><input type="checkbox" name="id" :value="term.id" :disabled="disabled(term)" number></td>
                 <td :style="indention(term)">
                     <span v-if="disabled(term)" class="uk-text-muted">{{ term.title }}</span>
                     <a v-else @click="select(term)">{{ term.title }}</a>

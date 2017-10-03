@@ -1,11 +1,11 @@
 <template>
 
     <div class="uk-margin uk-flex uk-flex-space-between uk-flex-wrap" data-uk-margin>
-        <div class="uk-flex uk-flex-middle uk-flex-wrap" data-uk-margin>
+        <div>
 
-            <h2 class="uk-margin-remove">{{ taxonomy.label_plural }}</h2>
+            <h2 class="uk-margin-small-bottom">{{ taxonomy.label_plural }}</h2>
 
-            <div class="pk-search">
+            <div>
                 <div class="uk-search">
                     <input class="uk-search-field" type="text" v-model="config.filter.search" debounce="300">
                 </div>
@@ -15,7 +15,7 @@
         <div>
 
             <button type="button" class="uk-button uk-button-primary" @click="add">
-                {{ 'Add' | trans }} {{ taxonomy.label_single }}</button>
+                {{ 'Add' | trans }} {{ taxonomy.label_single | trans }}</button>
 
         </div>
     </div>
