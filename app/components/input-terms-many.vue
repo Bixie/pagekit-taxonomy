@@ -14,7 +14,7 @@
 
         <p>
             <button type="button" class="uk-button uk-button-small" @click="pick">
-                {{ 'Select' | trans }} {{ taxonomy.label_plural | trans }}</button>
+            {{ 'Select' | trans }} {{ taxonomy.label_plural | trans }}</button>
         </p>
 
         <v-modal v-ref:modal>
@@ -37,93 +37,96 @@
 </template>
 
 <script>
+/*global _*/
+import TermsListSingle from './terms-list-single.vue';
+import TermsListHierarchical from './terms-list-hierarchical.vue';
 
-    module.exports = {
+export default {
 
-        name: 'input-terms-many',
+    name: 'InputTermsMany',
 
-        props: {
-            'taxonomyName': String,
-            'item_id': Number,
-            'onSelect': {type: Function, default: () => _.noop()},
-            'onRemove': {type: Function, default: () => _.noop()},
+    components: {
+        'terms-list-single': TermsListSingle,
+        'terms-list-hierarchical': TermsListHierarchical,
+    },
+
+    props: {
+        'taxonomyName': String,
+        'item_id': Number,
+        'onSelect': {type: Function, default: _.noop,},
+        'onRemove': {type: Function, default: _.noop,},
+    },
+
+    data: () => ({
+        taxonomy: false,
+        selected: [],
+    }),
+
+    computed: {
+        excluded() {
+            return this.selected.map(term => term.id);
+        },
+    },
+
+    created() {
+        this.resource = this.$resource('api/taxonomy{/id}');
+        this.load();
+    },
+
+    methods: {
+
+        load() {
+            return this.resource.query({id: 'item',}, {
+                taxonomyName: this.taxonomyName,
+                item_id: this.item_id,
+            }).then(res => {
+                this.$set('taxonomy', res.data.taxonomy);
+                this.$set('selected', res.data.terms);
+            }, () => this.$notify('Loading failed.', 'danger'));
         },
 
-        data() {
-            return {
-                taxonomy: false,
-                selected: [],
-            };
+        save() {
+            return this.resource.save({id: 'item',}, {
+                taxonomyName: this.taxonomyName,
+                item_id: this.item_id,
+                terms: this.selected,
+            }).then(res => {
+                this.$set('selected', res.data.terms);
+                this.$notify('Terms saved')
+            }, () => this.$notify('Loading failed.', 'danger'));
         },
 
-        created() {
-            this.resource = this.$resource('api/taxonomy{/id}');
-            this.load();
+        pick() {
+            this.$refs.modal.open();
         },
 
-        computed: {
-            excluded() {
-                return this.selected.map(term => term.id);
-            }
+        select() {
+            let selected = _.filter(this.$refs.termsList.getSelected(),
+                term => _.find(this.selected, {id: term.id,}) === undefined);
+            this.selected = this.selected.concat(selected);
+            this.save().then(() => {
+                this.$refs.modal.close();
+                this.onSelect(this.selected);
+            });
         },
 
-        methods: {
-
-            load() {
-                return this.resource.query({id: 'item'}, {
-                    taxonomyName: this.taxonomyName,
-                    item_id: this.item_id,
-                }).then(res => {
-                    this.$set('taxonomy', res.data.taxonomy);
-                    this.$set('selected', res.data.terms);
-                }, () => this.$notify('Loading failed.', 'danger'));
-            },
-
-            save() {
-                return this.resource.save({id: 'item'}, {
-                    taxonomyName: this.taxonomyName,
-                    item_id: this.item_id,
-                    terms: this.selected,
-                }).then(res => {
-                    this.$set('selected', res.data.terms);
-                    this.$notify('Terms saved')
-                }, () => this.$notify('Loading failed.', 'danger'));
-            },
-
-            pick() {
-                this.$refs.modal.open();
-            },
-
-            select() {
-                var selected = _.filter(this.$refs.termsList.getSelected(), term => _.find(this.selected, {id: term.id}) === undefined);
-                this.selected = this.selected.concat(selected);
-                this.save().then(() => {
-                    this.$refs.modal.close();
-                    this.onSelect(this.selected);
-                });
-            },
-
-            remove(item) {
-                this.selected.$remove(item);
-                this.save().then(() => {
-                    this.onRemove(item);
-                });
-            },
-
-            hasSelection() {
-                return this.$refs.termsList.nrSelected() > 0;
-            },
-
-            isSelected(term) {
-                return this.selected === term;
-            }
+        remove(item) {
+            this.selected.$remove(item);
+            this.save().then(() => {
+                this.onRemove(item);
+            });
         },
 
-        components: {
-            'terms-list-single': require('./terms-list-single.vue'),
-            'terms-list-hierarchical': require('./terms-list-hierarchical.vue'),
+        hasSelection() {
+            return this.$refs.termsList.nrSelected() > 0;
         },
 
-    };
+        isSelected(term) {
+            return this.selected === term;
+        },
+
+    },
+
+};
 
 </script>

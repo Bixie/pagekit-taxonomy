@@ -1,9 +1,13 @@
+import TermsSingle from './components/terms-single.vue';
+import TermsHierarchical from './components/terms-hierarchical.vue';
+import InputTermsMany from './components/input-terms-many.vue';
+import InputTermsOne from './components/input-terms-one.vue';
 
 if (window.Vue) {
 
-    Vue.component('terms-single', require('./components/terms-single.vue'));
-    Vue.component('terms-hierarchical', require('./components/terms-hierarchical.vue'));
-    Vue.component('input-terms-many', require('./components/input-terms-many.vue'));
-    Vue.component('input-terms-one', require('./components/input-terms-one.vue'));
+    window.Vue.component('terms-single', TermsSingle);
+    window.Vue.component('terms-hierarchical', TermsHierarchical);
+    window.Vue.component('input-terms-many', InputTermsMany);
+    window.Vue.component('input-terms-one', InputTermsOne);
 
 }
