@@ -62,31 +62,30 @@
         <script id="term" type="text/template">
 
             <li class="uk-nestable-item check-item" :class="{'uk-parent': tree[term.id], 'uk-active': rootVm.isSelected(term)}" :data-id="term.id">
-            <div class="uk-nestable-panel pk-table-fake uk-visible-hover">
-            <div class="pk-table-width-minimum pk-table-collapse">
-            <div class="uk-nestable-toggle" data-nestable-action="toggle"></div>
-            </div>
-            <div class="pk-table-width-minimum"><input type="checkbox" name="id" :value="term.id" number></div>
-            <div class="pk-table-min-width-200">
-            <a @click="rootVm.editTerm(term)">{{ term.title }}</a><br/>
-            <small class="uk-text-muted">{{ term.slug }}</small>
-            </div>
-            <div class="pk-table-width-100 uk-text-center">
-            <td class="uk-text-center">
-            <a :class="{'pk-icon-circle-danger': !term.status, 'pk-icon-circle-success': term.status}" @click="toggleStatus"></a>
-            </td>
-            </div>
-            <div class="pk-table-width-100 uk-text-center">#</div>
-            <div class="pk-table-width-200 pk-table-max-width-150 uk-text-truncate">
-            <a :title="term.url" target="_blank" :href="$url.route(term.url.substr(1))"
-            v-if="term.url">{{ decodeURI(term.url) }}</a>
-            <span v-else>{{ term.path }}</span>
-            </div>
-            </div>
+                <div class="uk-nestable-panel pk-table-fake uk-visible-hover uk-form">
+                    <div class="pk-table-width-minimum pk-table-collapse">
+                        <div class="uk-nestable-toggle" data-nestable-action="toggle"></div>
+                    </div>
+                    <div class="pk-table-width-minimum"><input type="checkbox" name="id" :value="term.id" number></div>
+                    <div class="pk-table-min-width-200">
+                        <a @click="rootVm.editTerm(term)">{{ term.title }}</a><br/>
+                        <small class="uk-text-muted">{{ term.slug }}</small>
+                    </div>
+                    <div class="pk-table-width-100 uk-text-center">
+                        <a :class="{'pk-icon-circle-danger': !term.status, 'pk-icon-circle-success': term.status}" @click="toggleStatus"></a>
+                    </div>
+                    <div class="pk-table-width-100 uk-text-center">#</div>
+                    <div class="pk-table-width-200 pk-table-max-width-150 uk-text-truncate">
+                        <a :title="term.url" target="_blank"
+                            :href="$url.route(term.url.substr(1))"
+                            v-if="term.url">{{ decodeURI(term.url) }}</a>
+                        <span v-else>{{ term.path }}</span>
+                    </div>
+                </div>
 
-            <ul class="uk-nestable-list" v-show="tree[term.id]">
-            <term-row v-for="term in tree[term.id]" :tree="tree" :term="term"></term-row>
-            </ul>
+                <ul class="uk-nestable-list" v-show="tree[term.id]">
+                    <term-row v-for="term in tree[term.id]" :tree="tree" :term="term"></term-row>
+                </ul>
 
             </li>
 
@@ -119,7 +118,7 @@ export default {
                 rootVm() {
                     let root = false, vm = this;
                     do {
-                        if (vm.$options.name === 'terms-hierarchical') {
+                        if (vm.$options.name === 'TermsHierarchical') {
                             root = vm;
                         }
                         vm = vm.$parent;
@@ -203,7 +202,7 @@ export default {
     ready() {
         UIkit.nestable(this.$els.nestable, {
             maxDepth: 20,
-            group: 'taxonomy.terms',
+            group: 'taxonomy.terms.' + this.taxonomyName,
         }).on('change.uk.nestable', (e, nestable, el, type) => {
             if (type && type !== 'removed') {
                 this.resource.save({id: 'updateOrder',}, {
