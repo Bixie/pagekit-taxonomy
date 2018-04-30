@@ -13,7 +13,7 @@
                 </div>
 
             </div>
-            <div>
+            <div v-if="allowAdd">
 
                 <button type="button" class="uk-button uk-button-primary" @click="add">
                 {{ 'Add' | trans }} {{ taxonomy.label_single | trans }}</button>
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div class="uk-overflow-container uk-form">
+        <div class="uk-overflow-container uk-form" :style="overflowStyle">
 
             <div class="pk-table-fake pk-table-fake-header" :class="{'pk-table-fake-border': !tree[0]}">
                 <div class="pk-table-width-minimum pk-table-fake-nestable-padding">
@@ -118,6 +118,8 @@ export default {
         'taxonomy': Object,
         'excluded': {type: Array, default: () => ([]),},
         'limit': {type: Number, default: 1000,},
+        'allowAdd': {type: Boolean, default: true,},
+        'maxHeight': {type: Number, default: 0,},
     },
 
     data() {
@@ -161,6 +163,12 @@ export default {
             }
             return Object.keys(this.index).map(id => Number(id));
         },
+        overflowStyle() {
+            if (this.maxHeight > 0) {
+                return `max-height: ${this.maxHeight}px;"`;
+            }
+            return '';
+        }
     },
 
     watch: {
