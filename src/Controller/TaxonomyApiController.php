@@ -6,7 +6,7 @@ use Bixie\Taxonomy\Model\Term;
 use Pagekit\Application as App;
 
 /**
- * @Access("site: manage site")
+ * @Access("taxonomy: manage taxonomy")
  */
 class TaxonomyApiController {
 
