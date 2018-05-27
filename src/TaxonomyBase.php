@@ -116,7 +116,7 @@ class TaxonomyBase {
     public function saveTerms ($item_id, $terms)
     {
         $term_ids = array_map(function ($term) {
-            return $term['id'];
+            return $term instanceof Term ? $term->id : $term['id'];
         }, $terms);
         $existing = $this->itemTerms($item_id);
         $remove = array_diff(array_keys($existing), $term_ids);
@@ -129,11 +129,11 @@ class TaxonomyBase {
             }
         }
         //save new
-        foreach ($terms as $term) {
-            if (!isset($existing[$term['id']])) {
+        foreach ($term_ids as $term_id) {
+            if (!isset($existing[$term_id])) {
                 $xref = TermItem::create([
                     'item_id' => $item_id,
-                    'term_id' => $term['id'],
+                    'term_id' => $term_id,
                 ]);
                 $xref->save();
             }
