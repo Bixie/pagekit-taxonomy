@@ -14,7 +14,7 @@
                 </div>
 
             </div>
-            <div>
+            <div v-if="allowAdd">
 
                 <button type="button" class="uk-button uk-button-primary" @click="add">
                 {{ 'Add' | trans }} {{ taxonomy.label_single | trans }}</button>
@@ -73,6 +73,7 @@ export default {
     props: {
         'taxonomy': Object,
         'excluded': {type: Array, default: () => ([]),},
+        'allowAdd': {type: Boolean, default: true,},
         'limit': {type: Number, default: 10,},
     },
 

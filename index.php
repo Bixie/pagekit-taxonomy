@@ -39,7 +39,15 @@ return [
 	'config' => [
 	],
 
-	'events' => [
+    'permissions' => [
+
+        'taxonomy: manage taxonomy' => [
+            'title' => 'Manage taxonomy'
+        ],
+
+    ],
+
+    'events' => [
         'boot' => function ($event, $app) {
             $app->subscribe(
                 new \Bixie\Taxonomy\Event\RouteListener()

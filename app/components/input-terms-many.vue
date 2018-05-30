@@ -21,7 +21,8 @@
 
             <div :is="'terms-list-' + taxonomy.type" v-ref:terms-list
                  :taxonomy="taxonomy"
-                 :excluded="excluded"></div>
+                 :excluded="excluded"
+                 :allow-add="allowAdd"></div>
 
             <div class="uk-modal-footer uk-text-right">
                 <button class="uk-button uk-button-link uk-modal-close" type="button">{{ 'Cancel' | trans }}</button>
@@ -53,6 +54,7 @@ export default {
     props: {
         'taxonomyName': String,
         'item_id': Number,
+        'allowAdd': {type: Boolean, default: true,},
         'onSelect': {type: Function, default: _.noop,},
         'onRemove': {type: Function, default: _.noop,},
     },
