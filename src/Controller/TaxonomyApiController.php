@@ -6,7 +6,7 @@ use Bixie\Taxonomy\Model\Term;
 use Pagekit\Application as App;
 
 /**
- * @Access("taxonomy: manage taxonomy")
+ * @Access("taxonomy: use taxonomy")
  */
 class TaxonomyApiController {
 
@@ -54,6 +54,7 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/", methods="POST")
      * @Route("/{id}", methods="POST", requirements={"id"="\d+"})
      * @Request({"term": "array", "id": "int"}, csrf=true)
@@ -75,6 +76,7 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/updateOrder", methods="POST")
      * @Request({"taxonomyName", "terms": "array"}, csrf=true)
      */
@@ -95,6 +97,7 @@ class TaxonomyApiController {
         return ['message' => 'success'];
     }
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/{id}", methods="DELETE", requirements={"id"="\d+"})
      * @Request({"id": "int"}, csrf=true)
      */
@@ -109,6 +112,7 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/bulk", methods="POST")
      * @Request({"terms": "array"}, csrf=true)
      */
@@ -122,6 +126,7 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/bulk", methods="DELETE")
      * @Request({"ids": "array"}, csrf=true)
      */
@@ -151,6 +156,7 @@ class TaxonomyApiController {
     }
 
     /**
+     * @Access("taxonomy: manage taxonomy")
      * @Route("/item", methods="POST")
      * @Request({"taxonomyName": "string", "item_id": "int", "terms": "array"}, csrf=true)
      */

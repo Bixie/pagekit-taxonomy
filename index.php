@@ -41,6 +41,10 @@ return [
 
     'permissions' => [
 
+        'taxonomy: use taxonomy' => [
+            'title' => 'Use taxonomy'
+        ],
+
         'taxonomy: manage taxonomy' => [
             'title' => 'Manage taxonomy'
         ],
