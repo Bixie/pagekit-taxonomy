@@ -46,7 +46,7 @@
 
         <h3 v-show="terms && !terms.length" class="uk-text-muted uk-text-center">{{ 'No terms found.' | trans }}</h3>
 
-        <v-pagination :page.sync="config.page" :pages="pages" v-show="pages > 1" :replace-history="false"></v-pagination>
+        <v-pagination :page.sync="config.page" :pages="pages" v-show="pages > 1" :replace-state="false"></v-pagination>
 
         <v-modal v-ref:form large>
             <partial :name="taxonomy.options.term_type"></partial>
